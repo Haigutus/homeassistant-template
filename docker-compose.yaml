@@ -1,0 +1,61 @@
+version: '3.8'
+services:
+  homeassistant:
+    image: homeassistant/home-assistant:2025.8.3
+    container_name: homeassistant
+    volumes:
+      - ./ha-config:/config
+      - /run/dbus:/run/dbus:ro
+    environment:
+      - TZ=Europe/Tallinn  # Adjust to your timezone, e.g., Europe/Tallinn
+    restart: unless-stopped
+    privileged: true
+    network_mode: host
+  appdaemon:
+    image: acockburn/appdaemon:4.5.11
+    container_name: appdaemon
+    volumes:
+      - ./appdaemon:/conf
+    environment:
+      - HA_URL=http://localhost:8123
+      - TOKEN=${HA_TOKEN}
+      - DASH_URL=http://0.0.0.0:5050
+    depends_on:
+      - homeassistant
+    restart: unless-stopped
+    network_mode: host
+  influxdb:
+    image: influxdb:2.7.12
+    container_name: influxdb
+    volumes:
+      - ./influxdata:/var/lib/influxdb
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=ha__admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_PASSWORD}
+      - DOCKER_INFLUXDB_INIT_ORG=homeassistant
+      - DOCKER_INFLUXDB_INIT_BUCKET=ha_metrics
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_ADMIN_TOKEN}
+    restart: unless-stopped
+    network_mode: host
+  grafana:
+    image: grafana/grafana:12.1.0
+    container_name: grafana
+    volumes:
+      - ./grafana:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+    restart: unless-stopped
+    network_mode: host
+  glances:
+    image: nicolargo/glances:4.3.3
+    container_name: glances
+    restart: unless-stopped
+    pid: host
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /etc/os-release:/etc/os-release:ro
+    environment:
+      - GLANCES_OPT=-w
+    network_mode: host

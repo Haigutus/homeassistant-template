@@ -1,0 +1,36 @@
+# Home Assistant
+.DS_Store
+*.db
+*.db-*
+*.log
+*.pyc
+__pycache__/
+
+# Secrets
+secrets.yaml
+
+# Sensitive configuration files
+.google.token
+.uuid
+known_devices.yaml
+google_calendars.yaml
+harmony_*.conf
+html5_push_registrations.conf
+ip_bans.yaml
+
+# SSL certificates
+*.crt
+*.csr
+*.key
+
+# SSH keys
+.ssh/
+
+# iCloud
+icloud/
+
+# Home Assistant backups
+backups/
+
+# Home Assistant storage
+.storage/
