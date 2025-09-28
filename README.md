@@ -42,8 +42,8 @@ This setup is ideal for users who prioritize the longevity of their SSD over ret
 1.  **Clone the Repository:**
 
     ```bash
-    git clone git@github.com:Haigutus/homeassistant.git
-    cd homeassistant
+    git clone git@github.com:Haigutus/homeassistant-template.git
+    cd homeassistant-template
     ```
 
 2.  **Run the Setup Script:**
